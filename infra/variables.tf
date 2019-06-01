@@ -1,0 +1,9 @@
+variable "name" {}
+variable "aws_region" {}
+variable "aws_profile" {}
+variable "vpc_cidr" {}
+variable "public_subnet" {}
+variable "instance_type" {}
+variable "ami" {}
+variable "public_key" {}
+variable "key_name" {}
