@@ -1,5 +1,6 @@
 variable "key_name" {}
 variable "sg_id" {}
+variable "sg_lb_id" {}
 variable "iam_id" {}
 variable "public_subnet_id" {}
 variable "azs" {}
@@ -19,7 +20,7 @@ resource "aws_instance" "demo" {
   vpc_security_group_ids = ["${var.sg_id}"]
   iam_instance_profile   = "${var.iam_id}"
   subnet_id              = "${element(split(",", var.public_subnet_id),count.index+1)}"
-  associate_public_ip_address = false
+  associate_public_ip_address = true
   user_data = <<-EOF
 	#!/bin/bash
 	sudo yum update -y
@@ -60,7 +61,7 @@ resource "aws_elb" "demo_elb" {
     lb_port           = 443
     lb_protocol       = "tcp"
   }
-  security_groups=["${var.sg_id}"]
+  security_groups=["${var.sg_lb_id}"]
   health_check {
     healthy_threshold   = 2
     unhealthy_threshold = 2
