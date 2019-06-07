@@ -9,6 +9,7 @@ variable "name" {
 
 variable "vpc_id" {}
 variable "cidrs" {}
+variable "azs" {}
 
 resource "aws_internet_gateway" "public" {
   vpc_id = "${var.vpc_id}"
@@ -19,11 +20,13 @@ resource "aws_internet_gateway" "public" {
 }
 
 resource "aws_subnet" "public" {
-  vpc_id     = "${var.vpc_id}"
-  cidr_block = "${var.cidrs}"
-
+  vpc_id            = "${var.vpc_id}"
+  cidr_block        = "${element(split(",", var.cidrs), count.index)}"
+  availability_zone = "${element(split(",", var.azs), count.index)}"
+  count             = "${length(split(",", var.cidrs))}"
+  
   tags = {
-    Name = "PublicSubet"
+      Name = "public-subnet--${element(split(',', var.azs), count.index)}"
   }
 
   lifecycle {
@@ -46,10 +49,11 @@ resource "aws_route_table" "public" {
 }
 
 resource "aws_route_table_association" "public" {
-  subnet_id      = "${aws_subnet.public.id}"
+  count          = "${length(split(",", var.cidrs))}"
+  subnet_id      = "${element(aws_subnet.public.*.id, count.index)}"
   route_table_id = "${aws_route_table.public.id}"
 }
 
 output "subnet_id" {
-  value = "${aws_subnet.public.id}"
+  value = "${join(",", aws_subnet.public.*.id)}"
 }

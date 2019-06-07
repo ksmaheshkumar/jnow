@@ -13,6 +13,7 @@ module "network" {
   name          = "${var.name}"
   vpc_cidr      = "${var.vpc_cidr}"
   public_subnet = "${var.public_subnet}"
+  azs           = "${var.azs}"
 }
 
 module "global" {
@@ -29,8 +30,9 @@ module "demo" {
   iam_id           = "${module.global.ec2_access_profile_id}"
   sg_id            = "${module.global.sg_ec2_id}"
   public_subnet_id = "${module.network.public_subnet_id}"
-  ami="${var.ami}"
-  instance_type="${var.instance_type}"
+  ami		   = "${var.ami}"
+  instance_type    = "${var.instance_type}"
+  azs              = "${var.azs}"
 
 }
 
