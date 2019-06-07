@@ -19,7 +19,7 @@ resource "aws_instance" "demo" {
   vpc_security_group_ids = ["${var.sg_id}"]
   iam_instance_profile   = "${var.iam_id}"
   subnet_id              = "${element(split(",", var.public_subnet_id),count.index+1)}"
-  associate_public_ip_address = true
+  associate_public_ip_address = false
   user_data = <<-EOF
 	#!/bin/bash
 	sudo yum update -y
